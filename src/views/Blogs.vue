@@ -4,9 +4,9 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Blogs",
   data: () => ({
-    name: "Home",
+    name: "Blogs",
   }),
 };
 </script>

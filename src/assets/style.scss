@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,200;0,300;0,400;0,600;0,800;1,300;1,500&display=swap");
+
+// Обычный
+$font-text : 'Bitter';
+// Курсив
+$font-text-cursiv : 'Bitter2';
+// Жирный
+$font-text-bolt : 'Bitter, serif';
+
+// Для заголовка
+$font-head : 'GolosUI';
+// Для жирного заголовка
+$font-head-bolt : 'GolosUIbolt';
+
+// Colors
+
+// Blue
+$blue-bark : #194484;
+$blue-medium : #0D6EB7;
+$blue-menium-2 : #276ED8;
+$blue-lite :#bbd6ff;
+
+//Green
+$green-dark :#06B25F;
+$green-lite :#66D6A0;
+
+// Grey
+$grey-dark : #242424;
+
+// White
+$white : #FFFFFF;
+// Top Panel Color Background
+$top-header-background: #f5faff;
+
+html {
+    font-size: 1px;
+}
+
+body {
+    font-family: "Bitter", sans-serif;
+    background-color: #f5faff;
+    font-size: 14rem;
+}
+
+.logo {
+    background-color: #f5faff;
+    padding-top: 16px;
+    font-weight: 600;
+    height: 100%;
+    width: 100%;
+
+    a {
+        display: block;
+        margin: 0 auto;
+        height: 84px;
+        max-width: 180px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    span {
+        text-align: center;
+        display: block;
+        padding-bottom: 10px;
+    }
+}
+
+@import "./saas/adaptive";
+@import "./saas/grid";

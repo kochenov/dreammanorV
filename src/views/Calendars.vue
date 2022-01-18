@@ -4,9 +4,9 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Calendars",
   data: () => ({
-    name: "Home",
+    name: "Calendars",
   }),
 };
 </script>

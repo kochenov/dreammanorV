@@ -1,0 +1,43 @@
+.header {
+    background: rgb(245, 250, 255);
+    background: linear-gradient(90deg, rgba(245, 250, 255, 1) 50%, rgba(25, 68, 132, 1) 50%);
+    background-size: 100% 80px;
+    background-repeat: no-repeat;
+    background-position-y: bottom;
+    margin-bottom: 1px;
+
+    &__wrap {
+        display: grid;
+        grid-template-areas: "header__logo-wrap header__nav-wrap";
+        grid-template-columns: 380px auto;
+        grid-template-rows: 126px;
+    }
+
+    &__logo-wrap {
+        grid-area: header__logo-wrap;
+    }
+
+    &__nav-wrap {
+        grid-area: header__nav-wrap;
+    }
+}
+
+.promo-info-link {
+    margin-bottom: 0.5px;
+}
+
+.page {
+    display: grid;
+    grid-template-areas: "page-main sidebar";
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: minmax(500px, 100%);
+    gap: 30px;
+}
+
+.page-main {
+    grid-area: page-main;
+}
+
+.sidebar {
+    grid-area: sidebar;
+}
