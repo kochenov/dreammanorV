@@ -22,8 +22,8 @@
     <div id="sub-menu">
       <ul
         class="nav__sub-menu"
-        v-for="(values, name, index) in subMenu"
-        :key="index"
+        v-for="(values, name) in subMenu"
+        :key="values.url"
         v-show="
           name === isSubMenu
             ? true
@@ -33,7 +33,9 @@
         "
       >
         <li v-for="(value, name, index) in values" :key="index">
-          <router-link :to="value.url"> {{ value.title }} </router-link>
+          <router-link :to="value.url" active-class="active">
+            {{ value.title }}
+          </router-link>
         </li>
       </ul>
     </div>

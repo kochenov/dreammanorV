@@ -73,11 +73,18 @@ const routes = [
     },
     component: () => import("../views/Account.vue"),
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    meta: {
+      layout: "index",
+    },
+    component: () => import("../views/NotFound.vue"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
 export default router;
