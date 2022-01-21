@@ -4,7 +4,7 @@
       <div class="header__logo-wrap">
         <div class="logo">
           <a class="logo-link" href="#">
-            <img src="img/logo.png" alt="" />
+            <img src="/img/logo.png" alt="" />
           </a>
           <span>УСАДЬБА МЕЧТЫ</span>
         </div>
@@ -14,15 +14,22 @@
       </div>
     </div>
   </header>
+
+  <PromoLink />
+  <Breadcrumbs />
   <router-view />
 </template>
 <script>
-import Menu from "@/components/main/menu";
+import Menu from "@/components/main/Menu";
+import PromoLink from "@/components/main/PromoLink";
+import Breadcrumbs from "@/components/main/Breadcrumbs";
 
 export default {
   name: "IndexLayout",
   components: {
     Menu,
+    PromoLink,
+    Breadcrumbs,
   },
 };
 </script>

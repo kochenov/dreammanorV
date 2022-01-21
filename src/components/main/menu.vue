@@ -10,8 +10,9 @@
           :href="link.url"
           class="nav__menu-link"
           :class="{
-            active: link.isActive || $route.href === link.url,
-            green: $route.href === link.url,
+            active:
+              link.isActive || $route.matched[0].meta.parent === link.subMenu,
+            green: $route.matched[0].meta.parent === link.subMenu,
           }"
           @click.prevent="addActiveClass($event, link.id)"
         >
@@ -24,13 +25,7 @@
         class="nav__sub-menu"
         v-for="(values, name) in subMenu"
         :key="values.url"
-        v-show="
-          name === isSubMenu
-            ? true
-            : name === $route.name && isSubMenu === ''
-            ? true
-            : false
-        "
+        v-show="subMenuActive(name)"
       >
         <li v-for="(value, name, index) in values" :key="index">
           <router-link :to="value.url" active-class="active">
@@ -130,45 +125,45 @@ export default {
         {
           id: 2,
           title: "Топ Блогеров",
-          url: "/",
+          url: "/blogers/top",
         },
         {
           id: 3,
           title: "Топ видео",
-          url: "/",
+          url: "/video/top",
         },
         {
           id: 4,
           title: "Сообщеста",
-          url: "/",
+          url: "/communities",
         },
         {
           id: 5,
           title: "Стать автором",
-          url: "/",
+          url: "/authors/register",
         },
       ],
       news: [
         {
           id: 1,
           title: "События",
-          url: "/",
+          url: "/news/action",
           extrac: true,
         },
         {
           id: 2,
           title: "Новости портала",
-          url: "/",
+          url: "/news",
         },
         {
           id: 3,
-          title: "Пользователи",
-          url: "/",
+          title: "Новые пользователи",
+          url: "/users/new",
         },
         {
           id: 4,
           title: "Рекорды",
-          url: "/",
+          url: "/records",
         },
       ],
       about: [
@@ -195,7 +190,7 @@ export default {
         {
           id: 5,
           title: "Стать автором",
-          url: "/",
+          url: "/author/new",
         },
         {
           id: 6,
@@ -360,12 +355,26 @@ export default {
         if (value.id === id) {
           value.isActive = true;
           this.isSubMenu = value.subMenu;
-          console.log(value.subMenu);
+          //console.log(value.subMenu);
         } else {
           value.isActive = false;
         }
       });
       // console.log("Текущая страница " + this.isSubMenu);
+    },
+    subMenuActive(name) {
+      if (name === this.isSubMenu) {
+        return true;
+      } else if (name === this.$route.name && this.isSubMenu === "") {
+        return true;
+      } else if (
+        this.$route.matched[0].meta.parent === name &&
+        this.isSubMenu === ""
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

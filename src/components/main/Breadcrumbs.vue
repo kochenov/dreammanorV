@@ -1,0 +1,68 @@
+<template>
+  <div class="breadcrumbs">
+    <div class="wrap">
+      <ul>
+        <li>
+          <router-link :to="{ name: 'home' }"> <fa icon="home" /></router-link>
+        </li>
+
+        <li
+          v-for="(link, index) in $route.matched[0].meta.breadcrumbs"
+          :key="link.url"
+        >
+          <router-link
+            v-if="index < $route.matched[0].meta.breadcrumbs.length - 1"
+            :to="link.url"
+            >{{ link.name }}</router-link
+          >
+          <span v-else>{{ link.name }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data: () => ({
+    //breadcrumbs: this.$route.matched.meta.breadcrumbs,
+  }),
+};
+</script>
+<style lang="scss" scoped>
+.breadcrumbs {
+  ul {
+    padding: 16px 0;
+    margin-left: 40px;
+    list-style: none;
+    display: flex;
+    gap: 18px;
+  }
+
+  li {
+    position: relative;
+    padding-left: 18px;
+    &::after {
+      content: url("/img/icons/i-right.svg");
+      position: absolute;
+      fill: #a9a9a9;
+
+      font-size: 11px;
+      top: 3px;
+      right: -20px;
+      width: 6px;
+    }
+
+    &:last-child::after {
+      content: none;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+  }
+
+  background-color: #f4f5f7;
+}
+</style>
