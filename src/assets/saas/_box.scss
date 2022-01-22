@@ -11,13 +11,21 @@
                 font-weight: 600;
 
                 &::before {
-                    font-family: 'Font Awesome\ 6 Free';
-                    content: "\f0a4";
-                    padding-right: 10px;
-
+                    content: url('/img/icons/i-list.svg');
+                    // background-image: url(/img/icons/i-list.svg);
+                    transform: scale(2);
+                    height: auto;
+                    width: 3px;
+                    display: inline-block;
+                    //background-size: 8px;
+                    //background-repeat: no-repeat;
+                    padding-right: 10px !important;
                 }
 
-                &:hover::before,
+                &:hover::before {
+                    content: url('/img/icons/i-list-hover.svg');
+                }
+
                 &:hover,
                 a:hover {
                     color: #06b25f;
@@ -26,10 +34,13 @@
 
             .active {
 
-                &::before,
+                &::before {
+                    content: url('/img/icons/i-list-hover.svg');
+                }
+
                 a {
                     color: #06b25f;
-                    padding: 0 2px;
+                    fill: #06b25f;
                 }
 
             }
