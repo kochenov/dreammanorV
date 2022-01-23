@@ -90,51 +90,81 @@
           </button>
         </div>
       </form>
-      <div class="data-res-view" v-if="result">
-        <div id="rezult">
+      <div v-if="result" class="data-res-view">
+        <div ref="canvasRow" id="rezult">
           <div class="res-ogorod">
-            <div class="distance-between-rows">
-              <b
-                >Расстояние между рядов: {{ distanceBetweenRows }} см (
-                {{ distanceBetweenRows / 100 }} м )</b
-              >
+            <div class="row">
+              <div>Расстояние между рядов:</div>
+              <div>
+                {{ distanceBetweenRows }} см ( {{ distanceBetweenRows / 100 }} м
+                )
+              </div>
             </div>
-            <div class="distance-between-bushes">
-              <b
-                >Растояние между кустов: {{ distanceBetweenBushes }} см (
-                {{ distanceBetweenBushes / 100 }} м )</b
-              ><br />
+            <div class="row">
+              <div>Растояние между кустов:</div>
+              <div>
+                {{ distanceBetweenBushes }} см (
+                {{ distanceBetweenBushes / 100 }} м )
+              </div>
             </div>
-            <div class="width">
-              <b>Ширина грядки: {{ width }} см ( {{ width / 100 }} м ) </b>
+            <div class="row">
+              <div>Ширина грядки:</div>
+              <div>{{ width }} см ( {{ width / 100 }} м )</div>
             </div>
-            <div class="height">
-              <b>Длина грядки: {{ height }} см ( {{ height / 100 }} м )</b>
+            <div class="row">
+              <div>Длина грядки:</div>
+              <div>{{ height }} см ( {{ height / 100 }} м )</div>
             </div>
-            <div class="perimetr">
-              <b>Перимитр: {{ (2 * (width + height)) / 100 }} м</b>
+            <div class="row">
+              <div>Перимитр:</div>
+              <div>{{ (2 * (width + height)) / 100 }} м</div>
             </div>
-            <div class="ploshad">
-              <b
-                >Площадь: {{ ((width / 100) * (height / 100)).toFixed(1) }} кв.
-                м ( {{ ((width / 100) * (height / 100) * 0.01).toFixed(1) }}
+            <div class="row">
+              <div>Площадь:</div>
+              <div>
+                {{ ((width / 100) * (height / 100)).toFixed(1) }} кв. м (
+                {{ ((width / 100) * (height / 100) * 0.01).toFixed(1) }}
                 соток )
-              </b>
+              </div>
             </div>
-            <div class="one-rows">
-              <b>В одном ряду: {{ oneRows }} кустов</b>
+            <div class="row">
+              <div>В одном ряду:</div>
+              <div>{{ oneRows }} кустов</div>
             </div>
           </div>
         </div>
         <div class="btn-group">
-          <button class="btn" id="calc-tomat-save">Сохранить результат</button
+          <div
+            v-show="saveResultBtn"
+            class="rotate-scale-down"
+            id="save-input-wrap"
+          >
+            <div class="btn-save grup">
+              <input
+                name="saveInput"
+                id="save-input"
+                placeholder="Введите название грядки"
+              />
+              <button class="btn">Сохранить</button>
+            </div>
+          </div>
+          <button
+            class="btn"
+            @click="saveResultBtn = !saveResultBtn"
+            id="calc-tomat-save"
+          >
+            Сохранить результат</button
           ><button class="btn" id="calc-tomat-plan">
             Запланировать посадку
           </button>
         </div>
       </div>
-      <div v-show="width !== 0 && height !== 0" class="picture">
-        <canvas ref="canvas" id="canvas"></canvas>
+      <div class="picture">
+        <canvas
+          v-show="width !== 0 && height !== 0"
+          ref="canvas"
+          id="canvas"
+        ></canvas>
       </div>
     </div>
   </div>
@@ -179,7 +209,7 @@ export default {
       width: 0, // Ширина грядки
       height: 0, // Длины грядки
       oneRows: 0, // Кустов в одном ряду
-      canvas: null, //  Полотно для рисования
+      saveResultBtn: false, //  кнопка сохранить название грядки
     };
   },
   mounted() {},
@@ -202,37 +232,53 @@ export default {
         this.bushes !== "" &&
         this.rows !== ""
       ) {
-        // Если кнопка не была ранее нажата
-        if (!this.result) {
-          // меняем состояние на нажатое
-          this.result = true;
-          // Очищаем список ошибок
-          this.message = "";
+        if (this.bushes >= this.rows) {
+          // Если кнопка не была ранее нажата
+          if (!this.result) {
+            // меняем состояние на нажатое
+            this.result = true;
+            // Очищаем список ошибок
+            this.message = "";
+          }
+          // Количество кустов в одном ряду
+          this.oneRows = Math.ceil(this.bushes / this.rows);
+          // Ширины грядки
+          this.width =
+            this.rows * this.distanceBetweenRows + this.distanceBetweenRows;
+          // Длины грядки
+          this.height =
+            this.oneRows * this.distanceBetweenBushes +
+            this.distanceBetweenBushes;
+
+          let сanvasEl = this.$refs.canvas;
+          сanvasEl.setAttribute("width", Math.ceil(this.height / 2));
+          // Растягиваем полотно по высоте
+          сanvasEl.setAttribute("height", Math.ceil(this.width / 2));
+          let canvas = сanvasEl.getContext("2d");
+
+          // Рисуем прямоугольник
+          canvas.strokeRect(
+            0,
+            0,
+            Math.ceil(this.height / 2),
+            Math.ceil(this.width / 2)
+          );
+          this.canvasRow(canvas);
+
+          setTimeout(() => {
+            this.$refs.canvasRow.scrollIntoView({
+              block: "start",
+              behavior: "smooth",
+            });
+          }, 1);
+        } else {
+          // Если не все поля заполнены выводим сообщение
+          this.message = [
+            "Количество рядов не должно превышать количество кустов!",
+          ];
+          // Меняем состояние
+          this.result = false;
         }
-        // Количество кустов в одном ряду
-        this.oneRows = Math.ceil(this.bushes / this.rows);
-        // Ширины грядки
-        this.width =
-          this.rows * this.distanceBetweenRows + this.distanceBetweenRows;
-        // Длины грядки
-        this.height =
-          this.oneRows * this.distanceBetweenBushes +
-          this.distanceBetweenBushes;
-
-        let сanvasEl = this.$refs.canvas;
-        сanvasEl.setAttribute("width", Math.ceil(this.height / 2));
-        // Растягиваем полотно по высоте
-        сanvasEl.setAttribute("height", Math.ceil(this.width / 2));
-        let canvas = сanvasEl.getContext("2d");
-
-        // Рисуем прямоугольник
-        canvas.strokeRect(
-          0,
-          0,
-          Math.ceil(this.height / 2),
-          Math.ceil(this.width / 2)
-        );
-        this.canvasRow(canvas);
       } else {
         // Если не все поля заполнены выводим сообщение
         this.message = ["Пожалуйста, заполните все поля формы!"];
@@ -283,5 +329,94 @@ export default {
 }
 .error {
   border: 1px solid red;
+}
+.res-ogorod {
+  .row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #a0a0a021;
+  }
+}
+
+#save-input-wrap {
+  box-shadow: 0 0 3px #777;
+
+  position: absolute;
+  bottom: 40px;
+  left: 35%;
+  right: 35%;
+
+  .btn-save {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 4px;
+    border-radius: 3px;
+    background-color: rgb(255, 255, 255);
+
+    width: auto;
+    margin: 0 auto;
+    box-shadow: 0 0 3px rgb(0, 0, 0);
+  }
+
+  input {
+    width: 80%;
+    padding: 5px 7px;
+  }
+
+  .btn {
+    padding: 5px 7px;
+  }
+}
+
+.rotate-scale-down {
+  -webkit-animation: rotate-scale-down 0.65s linear both;
+  animation: rotate-scale-down 0.65s linear both;
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2022-1-10 19:7:17
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info. 
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation rotate-scale-down
+ * ----------------------------------------
+ */
+@-webkit-keyframes rotate-scale-down {
+  0% {
+    -webkit-transform: scale(1) rotateZ(0);
+    transform: scale(1) rotateZ(0);
+  }
+
+  50% {
+    -webkit-transform: scale(0.5) rotateZ(180deg);
+    transform: scale(0.5) rotateZ(180deg);
+  }
+
+  100% {
+    -webkit-transform: scale(1) rotateZ(360deg);
+    transform: scale(1) rotateZ(360deg);
+  }
+}
+
+@keyframes rotate-scale-down {
+  0% {
+    -webkit-transform: scale(1) rotateZ(0);
+    transform: scale(1) rotateZ(0);
+  }
+
+  50% {
+    -webkit-transform: scale(0.5) rotateZ(180deg);
+    transform: scale(0.5) rotateZ(180deg);
+  }
+
+  100% {
+    -webkit-transform: scale(1) rotateZ(360deg);
+    transform: scale(1) rotateZ(360deg);
+  }
 }
 </style>
