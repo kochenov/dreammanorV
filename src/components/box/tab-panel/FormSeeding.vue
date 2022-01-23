@@ -159,12 +159,9 @@
           </button>
         </div>
       </div>
-      <div class="picture">
-        <canvas
-          v-show="width !== 0 && height !== 0"
-          ref="canvas"
-          id="canvas"
-        ></canvas>
+      <div class="picture" v-show="width !== 0 && height !== 0">
+        <h3>Схема грядки</h3>
+        <canvas ref="canvas" id="canvas"></canvas>
       </div>
     </div>
   </div>
@@ -369,6 +366,12 @@ export default {
   }
 }
 
+.picture {
+  h3 {
+    text-align: center;
+    padding-bottom: 20px;
+  }
+}
 .rotate-scale-down {
   -webkit-animation: rotate-scale-down 0.65s linear both;
   animation: rotate-scale-down 0.65s linear both;
