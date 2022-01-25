@@ -1,7 +1,7 @@
 <template>
   <div class="box__panel tab-active">
     <div class="history-seeding">
-      <div class="item">
+      <div v-for="item in history" :key="item.id" class="item">
         <div class="title">
           <h3>Грядка в полесаднике рядом со входом слева от калитки</h3>
           <span class="date-history">11 Января 2022</span>
@@ -18,73 +18,62 @@
             </button>
           </div>
         </div>
+        <div class="content">
+          <div class="res-ogorod">
+            <div class="row">
+              <div>Расстояние между рядов:</div>
+              <div>
+                {{ distanceBetweenRows }} см ( {{ distanceBetweenRows / 100 }} м
+                )
+              </div>
+            </div>
+            <div class="row">
+              <div>Растояние между кустов:</div>
+              <div>
+                {{ distanceBetweenBushes }} см (
+                {{ distanceBetweenBushes / 100 }} м )
+              </div>
+            </div>
+            <div class="row">
+              <div>Ширина грядки:</div>
+              <div>{{ width }} см ( {{ width / 100 }} м )</div>
+            </div>
+            <div class="row">
+              <div>Длина грядки:</div>
+              <div>{{ height }} см ( {{ height / 100 }} м )</div>
+            </div>
+            <div class="row">
+              <div>Перимитр:</div>
+              <div>{{ (2 * (width + height)) / 100 }} м</div>
+            </div>
+            <div class="row">
+              <div>Площадь:</div>
+              <div>
+                {{ ((width / 100) * (height / 100)).toFixed(1) }} кв. м (
+                {{ ((width / 100) * (height / 100) * 0.01).toFixed(1) }}
+                соток )
+              </div>
+            </div>
+            <div class="row">
+              <div>В одном ряду:</div>
+              <div>{{ oneRows }} кустов</div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="item">
-        <div class="title">
-          <h3>Грядка в полесаднике рядом со входом слева от калитки</h3>
-          <span class="date-history">11 Января 2022</span>
-        </div>
-        <div class="meta">
-          <div class="product-name ticket">Овощь: <span>Томат</span></div>
-          <div class="sort ticket">Сорт: <span>Столыпин</span></div>
-          <div class="bushes ticket">
-            Количество кустов: <span>15 шт.</span>
-          </div>
-          <div class="todgge">
-            <button>
-              <fa icon="arrow-right" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <h3>Грядка в полесаднике рядом со входом слева от калитки</h3>
-          <span class="date-history">11 Января 2022</span>
-        </div>
-        <div class="meta">
-          <div class="product-name ticket">Овощь: <span>Томат</span></div>
-          <div class="sort ticket">Сорт: <span>Столыпин</span></div>
-          <div class="bushes ticket">
-            Количество кустов: <span>15 шт.</span>
-          </div>
-          <div class="todgge">
-            <button>
-              <fa icon="arrow-right" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <h3 class="box__panel-title">
-      Зачем нужна история расчётов грядок для томатов?
-    </h3>
-    <div class="box__panel-content">
-      <p>
-        Когда наступает весна, садоводы и огородники начинают планировать
-        посадку овощей на свой огород, а томат это один из самых важных овощей,
-        и к его посадке нужно относится с большой ответственностью. Начинается
-        конечно же всё с рассады, но когда первые семячки томатов проклюнулись и
-        взошли начинается планирование грядок
-      </p>
-      К сожалению не всегда есть возможность высчитывать сколько кустов займут
-      место на огороде и записывать это всё в тетрадь.
-      <p>
-        Мы решили облегчить этот процесс и добавили на сайт различные
-        калькуляторы расчёта площади грядок под посадки различных овощей, и
-        томат у нас на первом месте.
-      </p>
-      Произведя расчёт в калькуляторе грядок под томаты Вы можете его сохранить,
-      задав название расчёту для повторного его использования. После сохраниния
-      в истории расчётов будет списох сохранённых вычислений. Это очень удобно,
-      так как можно примерно прикинуть сколько грядок у вас будет, а когда время
-      придёт к высадке томаков в грядки Вы уже будите знать каким образом их
-      рассаживать.
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      history: [{ id: 1 }, { id: 2 }],
+    };
+  },
+};
+</script>
+
 <style scoped lang="scss">
 .history-seeding {
   .title,
@@ -99,13 +88,13 @@
     gap: 20px;
   }
   .ticket {
-    border: 1px solid green;
+    border: 1px solid #194484;
     padding: 4px 10px;
     font-size: 10px;
     text-transform: uppercase;
     font-weight: 600;
-    background: #194484;
-    color: #ffffff;
+    background: none;
+    color: #194484;
   }
   .item {
     margin: 0 0 40px 0;
