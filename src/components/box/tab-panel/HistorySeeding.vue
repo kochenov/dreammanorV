@@ -1,6 +1,17 @@
 <template>
   <div class="box__panel tab-active">
     <div class="history-seeding">
+      <div class="history-seeding__inform">
+        <div class="todgge">
+          <button></button>
+        </div>
+        <div class="todgge">
+          <button></button>
+        </div>
+        <div class="todgge">
+          <button></button>
+        </div>
+      </div>
       <div v-for="item in history" :key="item.id" class="item">
         <div class="title">
           <h3>{{ item.title }}</h3>
@@ -20,6 +31,10 @@
             Рядов: <span>{{ item.rows }} шт.</span>
           </div>
           <div class="todgge">
+            <button @click="item.exp = !item.exp">
+              <fa v-if="!item.exp" icon="arrow-right" />
+              <fa v-if="item.exp" icon="arrow-down" />
+            </button>
             <button @click="item.exp = !item.exp">
               <fa v-if="!item.exp" icon="arrow-right" />
               <fa v-if="item.exp" icon="arrow-down" />
@@ -146,6 +161,7 @@ export default {
   .todgge {
     margin-left: auto;
     button {
+      margin-left: 10px;
       cursor: pointer;
       padding: 1px 10px;
       border: 2px solid #06b25f;
@@ -157,6 +173,16 @@ export default {
         background: #f0f0f000;
         color: #000000;
       }
+    }
+  }
+
+  &__inform {
+    display: flex;
+    gap: 15px;
+    justify-content: end;
+    margin-bottom: 10px;
+    .todgge {
+      margin-left: 0;
     }
   }
 }
