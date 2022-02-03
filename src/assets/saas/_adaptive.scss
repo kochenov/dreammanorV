@@ -71,7 +71,7 @@ $xxl: 1600px;
 
     // Для ноутбуков
     @include screen-size(xl) {
-        max-width: calc(1024px - 32px * 2);
+        max-width: calc(1400px - 32px * 2);
     }
 
     //

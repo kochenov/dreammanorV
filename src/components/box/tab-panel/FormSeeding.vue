@@ -167,35 +167,37 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
-      sorts: [
-        {
-          id: 1,
-          name: "Столыпин",
-          distanceBetweenRows: 70,
-          distanceBetweenBushes: 100,
-        },
-        {
-          id: 2,
-          name: "Сорт 1",
-          distanceBetweenRows: 40,
-          distanceBetweenBushes: 40,
-        },
-        {
-          id: 3,
-          name: "Сорт 2",
-          distanceBetweenRows: 50,
-          distanceBetweenBushes: 60,
-        },
-        {
-          id: 4,
-          name: "Сорт 3",
-          distanceBetweenRows: 60,
-          distanceBetweenBushes: 70,
-        },
-      ],
+      sorts: null,
+      // sorts: [
+      //   {
+      //     id: 1,
+      //     name: "Столыпин",
+      //     distanceBetweenRows: 70,
+      //     distanceBetweenBushes: 100,
+      //   },
+      //   {
+      //     id: 2,
+      //     name: "Сорт 1",
+      //     distanceBetweenRows: 40,
+      //     distanceBetweenBushes: 40,
+      //   },
+      //   {
+      //     id: 3,
+      //     name: "Сорт 2",
+      //     distanceBetweenRows: 50,
+      //     distanceBetweenBushes: 60,
+      //   },
+      //   {
+      //     id: 4,
+      //     name: "Сорт 3",
+      //     distanceBetweenRows: 60,
+      //     distanceBetweenBushes: 70,
+      //   },
+      // ],
       currentSort: "default", // Текущий сорт овоща
       distanceBetweenRows: "", // Расстояние между рядов
       distanceBetweenBushes: "", // Расстояние между кустов
@@ -209,7 +211,29 @@ export default {
       saveResultBtn: false, //  кнопка сохранить название грядки
     };
   },
-  mounted() {},
+  mounted() {
+    axios({
+      method: "put",
+      url: "http://127.0.0.1:8000/api/V1/vegetable/1",
+      params: {
+        //user_key_id: "USER_KEY_ID",
+      },
+      data: {
+        name: "Тыква",
+      },
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then(function (response) {
+        //console.log("Ответ сервера успешно получен!");
+        this.sorts = response.data.data.sorts;
+        console.log(response.data.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  },
   methods: {
     // Метод срабатывает при изменении сорта овоща
     getSortData() {

@@ -91,6 +91,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -127,6 +129,28 @@ export default {
         },
       ],
     };
+  },
+  mounted() {
+    axios({
+      method: "put",
+      url: "http://127.0.0.1:8000/api/vegetable/7",
+      params: {
+        //user_key_id: "USER_KEY_ID",
+      },
+      data: {
+        name: "Тыква",
+      },
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then(function (response) {
+        console.log("Ответ сервера успешно получен!");
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   },
 };
 </script>
