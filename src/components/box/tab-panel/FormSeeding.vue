@@ -213,28 +213,25 @@ export default {
   },
   mounted() {
     axios({
-      method: "put",
+      method: "GET",
       url: "http://127.0.0.1:8000/api/V1/vegetable/1",
       params: {
         //user_key_id: "USER_KEY_ID",
       },
-      data: {
-        name: "Тыква",
-      },
+      data: {},
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
-      .then(function (response) {
-        //console.log("Ответ сервера успешно получен!");
-        this.sorts = response.data.data.sorts;
-        console.log(response.data.data);
-      })
+      .then((response) => this.dataExt(response))
       .catch(function (error) {
         console.log(error);
       });
   },
   methods: {
+    dataExt(respons) {
+      this.sorts = respons.data.data.sorts;
+    },
     // Метод срабатывает при изменении сорта овоща
     getSortData() {
       // Если выбран сорт овоща
