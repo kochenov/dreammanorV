@@ -19,8 +19,14 @@
               name="sort-tomat"
               v-model="currentSort"
             >
-              <option selected value="default">
-                Без сорта (Универсальные значения)
+              <option selected disabled value="default">Сорт не выбран</option>
+              <option
+                v-if="loadingDataApi"
+                disabled
+                value="load"
+                class="loading"
+              >
+                Загрузка данных ...
               </option>
               <option v-for="item in sorts" :key="item.id" :value="item">
                 {{ item.name }}
@@ -149,6 +155,9 @@
                 placeholder="Введите название грядки"
               />
               <button class="btn">Сохранить</button>
+              <button class="btn close" @click="saveResultBtn = !saveResultBtn">
+                Отмена
+              </button>
             </div>
           </div>
           <button
@@ -176,6 +185,7 @@ export default {
     return {
       sorts: null,
       errorDataApi: false,
+      loadingDataApi: true,
       // sorts: [
       //   {
       //     id: 1,
@@ -231,6 +241,9 @@ export default {
       .catch((error) => {
         this.errorDataApi = true;
         console.log(error);
+      })
+      .finally(() => {
+        this.loadingDataApi = false;
       });
   },
   methods: {
@@ -342,6 +355,14 @@ export default {
 };
 </script>
 <style lang="scss">
+.close {
+  color: rgb(235, 135, 135) !important;
+  border-color: rgb(235, 135, 135) !important;
+  &:hover {
+    color: rgb(0, 0, 0) !important;
+    border-color: rgb(0, 0, 0) !important;
+  }
+}
 .alert {
   color: red;
   padding: 15px 30px;
@@ -366,8 +387,8 @@ export default {
 
   position: absolute;
   bottom: 40px;
-  left: 35%;
-  right: 35%;
+  left: 25%;
+  right: 25%;
 
   .btn-save {
     display: flex;
