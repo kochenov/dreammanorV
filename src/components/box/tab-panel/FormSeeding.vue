@@ -6,6 +6,9 @@
           {{ text }}
         </div>
       </div>
+      <div v-if="errorDataApi">
+        <div class="alert">Ошибка загрузки данных!</div>
+      </div>
       <form id="calc-veget" action="" method="get">
         <div class="form-input">
           <div class="grup">
@@ -172,6 +175,7 @@ export default {
   data() {
     return {
       sorts: null,
+      errorDataApi: false,
       // sorts: [
       //   {
       //     id: 1,
@@ -224,7 +228,8 @@ export default {
       },
     })
       .then((response) => this.dataExt(response))
-      .catch(function (error) {
+      .catch((error) => {
+        this.errorDataApi = true;
         console.log(error);
       });
   },
