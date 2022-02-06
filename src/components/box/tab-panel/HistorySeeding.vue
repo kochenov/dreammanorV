@@ -5,21 +5,38 @@
     </div>
     <div v-if="loadingDataApi" class="alert loading">Загрузка данных ...</div>
     <div class="history-seeding">
-      <div class="history-seeding__inform">
-        <div class="todgge">
-          <button></button>
-        </div>
-        <div class="todgge">
-          <button></button>
-        </div>
-        <div class="todgge">
-          <button></button>
-        </div>
-      </div>
       <div v-for="item in history" :key="item.id" class="item">
         <div class="title">
           <h3>{{ item.name }}</h3>
-          <span class="date-history">{{ item.dateAdd }}</span>
+          <div v-if="item.edit" class="input-edit">
+            <form>
+              <div class="form-input">
+                <div class="grup">
+                  <label>Новое именование сохранённого расчёта грядки</label>
+                  <input type="text" :value="item.name" />
+                </div>
+              </div>
+              <div class="form-input">
+                <div class="grup">
+                  <label>Количество кустов</label>
+                  <input type="number" :value="item.bushes" />
+                </div>
+                <div class="grup">
+                  <label>Количество рядов</label>
+                  <input type="number" :value="item.rows" />
+                </div>
+              </div>
+              <div class="wrap-btn">
+                <button class="btn btn-cancel" @click.prevent="btnClose(item)">
+                  Отмена
+                </button>
+                <button class="btn" @click.prevent="true">
+                  Сохранить изменения
+                </button>
+              </div>
+            </form>
+          </div>
+          <span class="date-history">{{ formatDate(item.created_at) }}</span>
         </div>
         <div class="meta">
           <div class="product-name ticket">
@@ -35,6 +52,16 @@
             Рядов: <span>{{ item.rows }} шт.</span>
           </div>
           <div class="todgge">
+            <button
+              v-if="item.edit !== true"
+              @click="btnEdit(item)"
+              class="btn-edit"
+            >
+              <fa icon="pen-to-square" />
+            </button>
+            <button class="btn-del">
+              <fa icon="trash-can" />
+            </button>
             <button @click="item.exp = !item.exp">
               <fa v-if="!item.exp" icon="arrow-right" />
               <fa v-if="item.exp" icon="arrow-down" />
@@ -199,6 +226,26 @@ export default {
     height(oneRows, distanceBetweenBushes) {
       return oneRows * distanceBetweenBushes + distanceBetweenBushes;
     },
+    formatDate(d) {
+      let options = {
+        //weekday: false,
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      };
+      let dateTime = new Date(Date.parse(d));
+
+      return dateTime.toLocaleDateString("ru-RU", options);
+    },
+    btnEdit(item) {
+      item.edit = true;
+      item.exp = true;
+      return item;
+    },
+    btnClose(item) {
+      item.edit = false;
+      return item;
+    },
   },
 };
 </script>
@@ -229,6 +276,47 @@ export default {
     margin: 0 0 40px 0;
     border: 1px solid #06b25f;
     padding: 10px 15px;
+    position: relative;
+    .input-edit {
+      height: 100%;
+      width: 100%;
+      padding: 0 10px;
+      background: #000000c2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      align-content: center;
+      form {
+        width: 100%;
+        color: white;
+      }
+      input {
+        border-radius: 3px;
+      }
+      .wrap-btn {
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        .btn {
+          margin: 15px 0;
+        }
+
+        .btn-cancel {
+          color: rgb(231, 231, 4) !important;
+          background: rgba(255, 255, 255, 0) !important;
+          box-sizing: border-box;
+          border: 1px solid rgb(231, 231, 4) !important;
+          &:hover {
+            color: rgb(255, 255, 255) !important;
+            // background: #ccc !important;
+            border-color: rgb(255, 255, 255) !important;
+          }
+        }
+      }
+    }
   }
   .todgge {
     margin-left: auto;
@@ -256,5 +344,26 @@ export default {
       margin-left: 0;
     }
   }
+}
+.btn-edit {
+  color: rgb(165, 165, 0) !important;
+  border-color: rgb(192, 192, 9) !important;
+  &:hover {
+    color: black !important;
+    border-color: black !important;
+  }
+}
+
+.btn-del {
+  color: rgb(165, 19, 0) !important;
+  border-color: rgb(165, 19, 0) !important;
+  &:hover {
+    color: black !important;
+    border-color: black !important;
+  }
+}
+.date-history {
+  font-size: 11px;
+  text-transform: capitalize;
 }
 </style>
