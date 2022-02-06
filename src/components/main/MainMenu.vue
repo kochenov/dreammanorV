@@ -27,7 +27,7 @@
         :key="values.url"
         v-show="subMenuActive(name)"
       >
-        <li v-for="(value, name, index) in values" :key="index">
+        <li v-for="(value, index) in values" :key="index">
           <router-link :to="value.url" active-class="active">
             {{ value.title }}
           </router-link>

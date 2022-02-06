@@ -141,12 +141,13 @@
 </template>
 <script>
 import axios from "axios";
+
 export default {
   data() {
     return {
       errorDataApi: false,
       loadingDataApi: true,
-      history: null,
+      history: "",
     };
   },
   mounted() {
@@ -249,7 +250,7 @@ export default {
   &__inform {
     display: flex;
     gap: 15px;
-    justify-content: end;
+    justify-content: flex-end;
     margin-bottom: 10px;
     .todgge {
       margin-left: 0;
