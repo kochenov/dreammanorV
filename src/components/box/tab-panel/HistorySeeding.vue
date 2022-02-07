@@ -5,37 +5,47 @@
     </div>
     <div v-if="loadingDataApi" class="alert loading">Загрузка данных ...</div>
     <div class="history-seeding">
-      <div v-for="item in history" :key="item.id" class="item">
+      <div
+        v-for="item in history"
+        :key="item.id"
+        class="item"
+        :ref="'formEdit' + item.id"
+      >
         <div class="title">
           <h3>{{ item.name }}</h3>
-          <div v-if="item.edit" class="input-edit">
-            <form>
-              <div class="form-input">
-                <div class="grup">
-                  <label>Новое именование сохранённого расчёта грядки</label>
-                  <input type="text" :value="item.name" />
+          <transition name="fade">
+            <div v-show="item.edit" class="input-edit">
+              <form>
+                <div class="form-input">
+                  <div class="grup">
+                    <label>Новое именование сохранённого расчёта грядки</label>
+                    <input type="text" :value="item.name" />
+                  </div>
                 </div>
-              </div>
-              <div class="form-input">
-                <div class="grup">
-                  <label>Количество кустов</label>
-                  <input type="number" :value="item.bushes" />
+                <div class="form-input">
+                  <div class="grup">
+                    <label>Количество кустов</label>
+                    <input type="number" :value="item.bushes" />
+                  </div>
+                  <div class="grup">
+                    <label>Количество рядов</label>
+                    <input type="number" :value="item.rows" />
+                  </div>
                 </div>
-                <div class="grup">
-                  <label>Количество рядов</label>
-                  <input type="number" :value="item.rows" />
+                <div class="wrap-btn">
+                  <button
+                    class="btn btn-cancel"
+                    @click.prevent="btnClose(item)"
+                  >
+                    Отмена
+                  </button>
+                  <button class="btn" @click.prevent="true">
+                    Сохранить изменения
+                  </button>
                 </div>
-              </div>
-              <div class="wrap-btn">
-                <button class="btn btn-cancel" @click.prevent="btnClose(item)">
-                  Отмена
-                </button>
-                <button class="btn" @click.prevent="true">
-                  Сохранить изменения
-                </button>
-              </div>
-            </form>
-          </div>
+              </form>
+            </div>
+          </transition>
           <span class="date-history">{{ formatDate(item.created_at) }}</span>
         </div>
         <div class="meta">
@@ -62,106 +72,111 @@
             <button class="btn-del">
               <fa icon="trash-can" />
             </button>
-            <button @click="item.exp = !item.exp">
+            <button @click="openContent(item)">
               <fa v-if="!item.exp" icon="arrow-right" />
               <fa v-if="item.exp" icon="arrow-down" />
             </button>
           </div>
         </div>
-        <div v-show="item.exp" class="content">
-          <div class="res-ogorod">
-            <div class="row">
-              <div>Расстояние между рядов:</div>
-              <div>
-                {{ item.vegetables.distanceBetweenRows }} см (
-                {{ item.vegetables.distanceBetweenRows / 100 }} м )
+        <transition name="slide-fade">
+          <div v-show="item.exp" class="content">
+            <div class="res-ogorod" :ref="'content' + item.id">
+              <div class="row">
+                <div>Расстояние между рядов:</div>
+                <div>
+                  {{ item.vegetables.distanceBetweenRows }} см (
+                  {{ item.vegetables.distanceBetweenRows / 100 }} м )
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div>Растояние между кустов:</div>
-              <div>
-                {{ item.vegetables.distanceBetweenBushes }} см (
-                {{ item.vegetables.distanceBetweenBushes / 100 }} м )
+              <div class="row">
+                <div>Растояние между кустов:</div>
+                <div>
+                  {{ item.vegetables.distanceBetweenBushes }} см (
+                  {{ item.vegetables.distanceBetweenBushes / 100 }} м )
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div>Ширина грядки:</div>
-              <div>
-                {{ widh(item.rows, item.vegetables.distanceBetweenRows) }} см (
-                {{ widh(item.rows, item.vegetables.distanceBetweenRows) / 100 }}
-                м )
+              <div class="row">
+                <div>Ширина грядки:</div>
+                <div>
+                  {{ widh(item.rows, item.vegetables.distanceBetweenRows) }} см
+                  (
+                  {{
+                    widh(item.rows, item.vegetables.distanceBetweenRows) / 100
+                  }}
+                  м )
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div>Длина грядки:</div>
-              <div>
-                {{
-                  height(
-                    oneRows(item.bushes, item.rows),
-                    item.vegetables.distanceBetweenBushes
-                  )
-                }}
-                см (
-                {{
-                  height(
-                    oneRows(item.bushes, item.rows),
-                    item.vegetables.distanceBetweenBushes
-                  ) / 100
-                }}
-                м )
+              <div class="row">
+                <div>Длина грядки:</div>
+                <div>
+                  {{
+                    height(
+                      oneRows(item.bushes, item.rows),
+                      item.vegetables.distanceBetweenBushes
+                    )
+                  }}
+                  см (
+                  {{
+                    height(
+                      oneRows(item.bushes, item.rows),
+                      item.vegetables.distanceBetweenBushes
+                    ) / 100
+                  }}
+                  м )
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div>Перимитр:</div>
-              <div>
-                {{
-                  (2 *
-                    (widh(item.rows, item.vegetables.distanceBetweenRows) +
-                      height(
+              <div class="row">
+                <div>Перимитр:</div>
+                <div>
+                  {{
+                    (2 *
+                      (widh(item.rows, item.vegetables.distanceBetweenRows) +
+                        height(
+                          oneRows(item.bushes, item.rows),
+                          item.vegetables.distanceBetweenBushes
+                        ))) /
+                    100
+                  }}
+                  м
+                </div>
+              </div>
+              <div class="row">
+                <div>Площадь:</div>
+                <div>
+                  {{
+                    (
+                      (widh(item.rows, item.vegetables.distanceBetweenRows) /
+                        100) *
+                      (height(
                         oneRows(item.bushes, item.rows),
                         item.vegetables.distanceBetweenBushes
-                      ))) /
-                  100
-                }}
-                м
+                      ) /
+                        100)
+                    ).toFixed(1)
+                  }}
+                  кв. м (
+                  {{
+                    (
+                      (widh(item.rows, item.vegetables.distanceBetweenRows) /
+                        100) *
+                      (height(
+                        oneRows(item.bushes, item.rows),
+                        item.vegetables.distanceBetweenBushes
+                      ) /
+                        100) *
+                      0.01
+                    ).toFixed(1)
+                  }}
+                  соток )
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div>Площадь:</div>
-              <div>
-                {{
-                  (
-                    (widh(item.rows, item.vegetables.distanceBetweenRows) /
-                      100) *
-                    (height(
-                      oneRows(item.bushes, item.rows),
-                      item.vegetables.distanceBetweenBushes
-                    ) /
-                      100)
-                  ).toFixed(1)
-                }}
-                кв. м (
-                {{
-                  (
-                    (widh(item.rows, item.vegetables.distanceBetweenRows) /
-                      100) *
-                    (height(
-                      oneRows(item.bushes, item.rows),
-                      item.vegetables.distanceBetweenBushes
-                    ) /
-                      100) *
-                    0.01
-                  ).toFixed(1)
-                }}
-                соток )
+              <div class="row">
+                <div>В одном ряду:</div>
+                <div>{{ oneRows(item.bushes, item.rows) }} кустов</div>
               </div>
-            </div>
-            <div class="row">
-              <div>В одном ряду:</div>
-              <div>{{ oneRows(item.bushes, item.rows) }} кустов</div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -174,7 +189,7 @@ export default {
     return {
       errorDataApi: false,
       loadingDataApi: true,
-      history: "",
+      history: null,
     };
   },
   mounted() {
@@ -240,10 +255,44 @@ export default {
     btnEdit(item) {
       item.edit = true;
       item.exp = true;
+
+      for (let i = 0; i < this.history.length; i++) {
+        if (item.id !== this.history[i].id) {
+          this.history[i].edit = false;
+          this.history[i].exp = false;
+        }
+      }
+      let num = "formEdit" + item.id;
+      let el = this.$refs[num][0];
+      //console.log(el);
+      setTimeout(() => {
+        el.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+          inline: "nearest",
+        });
+      }, 1);
       return item;
     },
     btnClose(item) {
       item.edit = false;
+      return item;
+    },
+    openContent(item) {
+      if (!item.exp) {
+        let num = "content" + item.id;
+        let el = this.$refs[num][0];
+        //console.log(el);
+        setTimeout(() => {
+          el.scrollIntoView({
+            block: "center",
+            behavior: "smooth",
+            inline: "nearest",
+          });
+        }, 1);
+      }
+      item.exp = !item.exp;
+
       return item;
     },
   },
@@ -277,7 +326,10 @@ export default {
     border: 1px solid #06b25f;
     padding: 10px 15px;
     position: relative;
+    overflow: hidden;
+    z-index: 1;
     .input-edit {
+      z-index: 10;
       height: 100%;
       width: 100%;
       padding: 0 10px;
@@ -365,5 +417,30 @@ export default {
 .date-history {
   font-size: 11px;
   text-transform: capitalize;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Анимации появления и исчезновения могут иметь    */
+/* различные продолжительности и функции плавности. */
+.slide-fade-enter-active {
+  transition: all 0.5s;
+}
+
+.slide-fade-leave-active {
+  //transition: all 0.1s;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(-150px);
+  opacity: 0;
 }
 </style>
