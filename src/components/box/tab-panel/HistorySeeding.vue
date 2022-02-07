@@ -16,20 +16,29 @@
           <transition name="fade">
             <div v-show="item.edit" class="input-edit">
               <form>
+                <div v-if="item.errors !== undefined">
+                  <div
+                    class="alert error"
+                    v-for="error in item.errors"
+                    :key="error"
+                  >
+                    {{ error }}
+                  </div>
+                </div>
                 <div class="form-input">
                   <div class="grup">
                     <label>Новое именование сохранённого расчёта грядки</label>
-                    <input v-model="item.name" type="text" />
+                    <input required v-model="item.name" type="text" />
                   </div>
                 </div>
                 <div class="form-input">
                   <div class="grup">
                     <label>Количество кустов</label>
-                    <input type="number" v-model="item.bushes" />
+                    <input type="number" min="1" v-model="item.bushes" />
                   </div>
                   <div class="grup">
                     <label>Количество рядов</label>
-                    <input type="number" v-model="item.rows" />
+                    <input type="number" min="1" v-model="item.rows" />
                   </div>
                 </div>
                 <div class="wrap-btn">
@@ -69,7 +78,7 @@
             >
               <fa icon="pen-to-square" />
             </button>
-            <button class="btn-del">
+            <button class="btn-del" @click="itemDelete(item.id)">
               <fa icon="trash-can" />
             </button>
             <button @click="openContent(item)">
@@ -190,33 +199,37 @@ export default {
       errorDataApi: false,
       loadingDataApi: true,
       history: null,
+      errors: [],
     };
   },
   mounted() {
-    axios({
-      method: "GET",
-      url: "http://127.0.0.1:8000/api/V1/vegetable-calculate",
-      params: {
-        //user_key_id: "USER_KEY_ID",
-      },
-      data: {},
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => {
-        this.history = response.data.data;
-        console.log(response.data.data);
-      })
-      .catch((error) => {
-        this.errorDataApi = true;
-        console.log(error);
-      })
-      .finally(() => {
-        this.loadingDataApi = false;
-      });
+    this.getHistory();
   },
   methods: {
+    getHistory() {
+      axios({
+        method: "GET",
+        url: "http://127.0.0.1:8000/api/V1/vegetable-calculate",
+        params: {
+          //user_key_id: "USER_KEY_ID",
+        },
+        data: {},
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => {
+          this.history = response.data.data;
+          console.log(response.data.data);
+        })
+        .catch((error) => {
+          this.errorDataApi = true;
+          console.log(error);
+        })
+        .finally(() => {
+          this.loadingDataApi = false;
+        });
+    },
     /**
      * Возвращает количество кустов одном ряду
      * @param {*} bushes
@@ -295,11 +308,23 @@ export default {
 
       return item;
     },
-    /**
-     * Сохранение изменений формы
-     */
-    saveFormToServe(item) {
-      console.log(item.name);
+    validateRequare(item, text) {
+      if (item === "") {
+        this.errors.push("Поле < " + text + " > обязательно для заполнения!");
+      }
+    },
+    validateNumeric(rows, bushes) {
+      if (rows > bushes) {
+        this.errors.push(
+          "Количество кустов не должно быть меньше количества рядов!"
+        );
+      }
+      if (rows < 1 || bushes < 1) {
+        this.errors.push("Числовые значения полей должны быть больше нуля!");
+      }
+    },
+
+    saveDataForm(item) {
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/V1/vegetable-calculate/" + item.id,
@@ -331,6 +356,53 @@ export default {
           item.edit = false;
           item.exp = false;
         });
+    },
+    /**
+     * Сохранение изменений формы
+     */
+    saveFormToServe(item) {
+      this.validateRequare(item.name, "Наименование расчёта");
+      this.validateRequare(item.rows, "Количество рядов");
+      this.validateRequare(item.bushes, "Количество кустов");
+      this.validateNumeric(item.rows, item.bushes);
+      console.log(this.errors);
+      if (this.errors.length === 0) {
+        this.saveDataForm(item);
+      } else {
+        item.errors = this.errors;
+      }
+    },
+
+    itemDelete(id) {
+      let isDel = confirm(
+        "Вы действительно хотите удалить сохранённые расчёты?"
+      );
+      if (isDel) {
+        axios({
+          method: "POST",
+          url: "http://127.0.0.1:8000/api/V1/vegetable-calculate/" + id,
+          params: {
+            //user_key_id: "USER_KEY_ID",
+          },
+          data: {
+            _method: "DELETE",
+          },
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then(() => {
+            this.history = [];
+            this.getHistory();
+          })
+          .catch((error) => {
+            this.errorDataApi = true;
+            console.log(error);
+          })
+          .finally(() => {
+            this.loadingDataApi = false;
+          });
+      }
     },
   },
 };
@@ -479,5 +551,9 @@ export default {
 .slide-fade-leave-to {
   transform: translateY(-150px);
   opacity: 0;
+}
+.error {
+  padding: 5px 10px !important;
+  font-size: 11px !important;
 }
 </style>
