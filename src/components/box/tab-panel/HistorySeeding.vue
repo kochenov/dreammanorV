@@ -19,17 +19,17 @@
                 <div class="form-input">
                   <div class="grup">
                     <label>Новое именование сохранённого расчёта грядки</label>
-                    <input type="text" :value="item.name" />
+                    <input v-model="item.name" type="text" />
                   </div>
                 </div>
                 <div class="form-input">
                   <div class="grup">
                     <label>Количество кустов</label>
-                    <input type="number" :value="item.bushes" />
+                    <input type="number" v-model="item.bushes" />
                   </div>
                   <div class="grup">
                     <label>Количество рядов</label>
-                    <input type="number" :value="item.rows" />
+                    <input type="number" v-model="item.rows" />
                   </div>
                 </div>
                 <div class="wrap-btn">
@@ -39,7 +39,7 @@
                   >
                     Отмена
                   </button>
-                  <button class="btn" @click.prevent="true">
+                  <button class="btn" @click.prevent="saveFormToServe(item)">
                     Сохранить изменения
                   </button>
                 </div>
@@ -295,6 +295,43 @@ export default {
 
       return item;
     },
+    /**
+     * Сохранение изменений формы
+     */
+    saveFormToServe(item) {
+      console.log(item.name);
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/V1/vegetable-calculate/" + item.id,
+        params: {},
+        data: {
+          _method: "PUT",
+          id: item.id,
+          name: item.name,
+          bushes: item.bushes,
+          rows: item.rows,
+          exp: 0,
+          vegetable_sort_id: item.vegetables.id,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          //this.history[item.id] = response.data.data;
+          console.log(response.data);
+          //return this.history[item.id];
+        })
+        .catch((error) => {
+          this.errorDataApi = true;
+          console.log(error);
+        })
+        .finally(() => {
+          this.loadingDataApi = false;
+          item.edit = false;
+          item.exp = false;
+        });
+    },
   },
 };
 </script>
@@ -431,11 +468,11 @@ export default {
 /* Анимации появления и исчезновения могут иметь    */
 /* различные продолжительности и функции плавности. */
 .slide-fade-enter-active {
-  transition: all 0.5s;
+  transition: all 0.2s;
 }
 
 .slide-fade-leave-active {
-  //transition: all 0.1s;
+  transition: all 0.1s;
 }
 
 .slide-fade-enter-from,
