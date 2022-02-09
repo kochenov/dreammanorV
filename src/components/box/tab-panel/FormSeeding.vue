@@ -148,13 +148,19 @@
             class="rotate-scale-down"
             id="save-input-wrap"
           >
+            <div class="error-info" v-if="saveStatus">
+              <span v-for="err in errorSaveForm" :key="err">
+                {{ err }}
+              </span>
+            </div>
             <div class="btn-save grup">
               <input
                 name="saveInput"
                 id="save-input"
+                v-model="nameSeeding"
                 placeholder="Введите название грядки"
               />
-              <button class="btn">Сохранить</button>
+              <button class="btn" @click="seedingSave">Сохранить</button>
               <button class="btn close" @click="saveResultBtn = !saveResultBtn">
                 Отмена
               </button>
@@ -186,32 +192,8 @@ export default {
       sorts: null,
       errorDataApi: false,
       loadingDataApi: true,
-      // sorts: [
-      //   {
-      //     id: 1,
-      //     name: "Столыпин",
-      //     distanceBetweenRows: 70,
-      //     distanceBetweenBushes: 100,
-      //   },
-      //   {
-      //     id: 2,
-      //     name: "Сорт 1",
-      //     distanceBetweenRows: 40,
-      //     distanceBetweenBushes: 40,
-      //   },
-      //   {
-      //     id: 3,
-      //     name: "Сорт 2",
-      //     distanceBetweenRows: 50,
-      //     distanceBetweenBushes: 60,
-      //   },
-      //   {
-      //     id: 4,
-      //     name: "Сорт 3",
-      //     distanceBetweenRows: 60,
-      //     distanceBetweenBushes: 70,
-      //   },
-      // ],
+      nameSeeding: "",
+      currentSortId: null,
       currentSort: "default", // Текущий сорт овоща
       distanceBetweenRows: "", // Расстояние между рядов
       distanceBetweenBushes: "", // Расстояние между кустов
@@ -219,6 +201,8 @@ export default {
       rows: 1, // Количество рядов
       result: false, // Состояние нажатой кнопки
       message: "", // Ошибки в отправке формы
+      saveStatus: false, // true  в случаи ошибки сохранения расчётов
+      errorSaveForm: [], // массив с ошибками сохранения формы
       width: 0, // Ширина грядки
       height: 0, // Длины грядки
       oneRows: 0, // Кустов в одном ряду
@@ -247,6 +231,58 @@ export default {
       });
   },
   methods: {
+    /**
+     * Сохранение результата вычислений в базу данных
+     */
+    seedingSave() {
+      this.errorSaveForm = [];
+      // empty
+      if (this.nameSeeding == "") {
+        this.saveStatus = true;
+        this.errorSaveForm.push("Имя сохранённой грядки не должно быть пустым");
+      }
+      if (this.errorSaveForm.length === 0) {
+        axios({
+          method: "POST",
+          url: "http://127.0.0.1:8000/api/V1/vegetable-calculate",
+          params: {
+            //user_key_id: "USER_KEY_ID",
+          },
+          data: {
+            _method: "POST",
+            name: this.nameSeeding,
+            bushes: this.bushes,
+            rows: this.rows,
+            exp: 0,
+            vegetable_sort_id: this.currentSort.id,
+          },
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          //.then((response) => this.dataExt(response))
+          .catch((error) => {
+            // При ошибки добавить вывод в форму
+            if (error.response.data.message) {
+              this.errorSaveForm.push(error.response.data.message);
+            }
+
+            // Показываем блок с ошибками над полем
+            this.saveStatus = true;
+            // Оставляем поле открытым ля редактирования
+            this.saveResultBtn = true;
+          })
+          .finally(() => {
+            this.loadingDataApi = false;
+          });
+        if (this.errorSaveForm.length === 0) {
+          this.saveResultBtn = false;
+          this.okSave = true;
+          this.saveStatus = false;
+          this.$parent.isComponent = "HistorySeeding";
+        }
+      }
+    },
     dataExt(respons) {
       this.sorts = respons.data.data.sorts;
     },
@@ -254,6 +290,7 @@ export default {
     getSortData() {
       // Если выбран сорт овоща
       if (this.currentSort !== "default") {
+        console.log(this.currentSort.id);
         // Сохраняем результаты из настроек сорта в переменные
         this.distanceBetweenRows = this.currentSort.distanceBetweenRows;
         this.distanceBetweenBushes = this.currentSort.distanceBetweenBushes;
@@ -380,6 +417,17 @@ export default {
     justify-content: space-between;
     border-bottom: 1px solid #a0a0a021;
   }
+}
+
+.error-info {
+  padding: 5px;
+  text-align: center;
+  font-size: 11px;
+  color: red;
+  font-weight: 600;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 2px;
 }
 
 #save-input-wrap {

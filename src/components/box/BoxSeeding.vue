@@ -56,6 +56,7 @@ export default {
   data: () => ({
     isComponent: "FormSeeding",
   }),
+  methods: {},
   components: {
     FormSeeding,
     HistorySeeding,
