@@ -1,48 +1,35 @@
 <template>
   <div class="box box-tab">
-    <div class="box__header">
-      <div class="box__header-wrapper-tabs">
-        <h2
-          class="box__header-title tab-link"
-          :class="{ active: isComponent === 'FormSeeding' }"
-        >
-          Калькулятор посева томатов
-        </h2>
-        <h2
-          class="box__header-title tab-link box-new"
-          :class="{ active: isComponent === 'HistorySeeding' }"
-        >
-          История рассчётов
-        </h2>
-        <h2
-          class="box__header-title tab-link box-popular"
-          :class="{ active: isComponent === 'UserSeeding' }"
-        >
-          Мои посадки
-        </h2>
-      </div>
-      <div class="box__header-links wrapper-link-tabs">
-        <a
-          class="box__header-link"
-          :class="{ active: isComponent === 'FormSeeding' }"
-          href="#"
-          @click="isComponent = 'FormSeeding'"
-          >Расчёт</a
-        ><a
-          class="box__header-link"
-          href="#"
-          :class="{ active: isComponent === 'HistorySeeding' }"
-          @click="isComponent = 'HistorySeeding'"
-          >История</a
-        ><a
-          class="box__header-link"
-          href="#"
-          :class="{ active: isComponent === 'UserSeeding' }"
-          @click="isComponent = 'UserSeeding'"
-          >Мои посадки</a
-        >
-      </div>
-    </div>
+    <BoxHeaderBlock
+      :current-component="isComponent"
+      :tabs="true"
+      :box-components="[
+        {
+          nameComponent: 'FormSeeding',
+          title: 'Калькулятор посева овощей',
+          menu: 'Расчёт',
+          flag: '',
+        },
+        {
+          nameComponent: 'HistorySeeding',
+          title: 'История рассчётов',
+          menu: 'История',
+          flag: 'box-new',
+        },
+        {
+          nameComponent: 'UserSeeding',
+          title: 'Мои посадки',
+          menu: 'Мои посадки',
+          flag: 'box-popular',
+        },
+      ]"
+      @setCurrentComponent="
+        (c) => {
+          isComponent = c;
+        }
+      "
+    />
+
     <component :is="isComponent" />
   </div>
 </template>
@@ -51,6 +38,7 @@
 import FormSeeding from "@/components/box/tab-panel/FormSeeding.vue";
 import HistorySeeding from "@/components/box/tab-panel/HistorySeeding.vue";
 import UserSeeding from "@/components/box/tab-panel/UserSeeding.vue";
+import BoxHeaderBlock from "./BoxHeaderBlock.vue";
 export default {
   name: "BoxSeeding",
   data: () => ({
@@ -61,6 +49,7 @@ export default {
     FormSeeding,
     HistorySeeding,
     UserSeeding,
+    BoxHeaderBlock,
   },
 };
 </script>

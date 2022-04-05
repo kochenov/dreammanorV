@@ -5,11 +5,16 @@
     </main>
     <aside class="sidebar">
       <div class="box">
-        <div class="box__header">
-          <div class="box__header-wrapper-tabs">
-            <h2 class="box__header-title">Расчёт посева</h2>
-          </div>
-        </div>
+        <BoxHeaderBlock
+          :box-components="[
+            {
+              nameComponent: 'FormSeeding',
+              title: 'Расчёт посева',
+              menu: 'Расчёт посева',
+              flag: '',
+            },
+          ]"
+        />
         <div class="box__content">
           <ul class="list-menu-link">
             <li class="active"><a href="#">Посев томатов </a></li>
@@ -33,6 +38,7 @@
 
 <script>
 import BoxSeeding from "@/components/box/BoxSeeding.vue";
+import BoxHeaderBlock from "../components/box/BoxHeaderBlock.vue";
 
 export default {
   name: "Seeding",
@@ -41,6 +47,7 @@ export default {
   }),
   components: {
     BoxSeeding,
+    BoxHeaderBlock,
   },
 };
 </script>
