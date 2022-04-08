@@ -90,13 +90,7 @@
           </div>
         </div>
         <div class="btn-group">
-          <button
-            @click.prevent="submitToResult"
-            class="btn"
-            id="calc-tomat-submit"
-          >
-            Сделать расчёт
-          </button>
+          <Btn @click.prevent="submitToResult"> Сделать расчёт </Btn>
         </div>
       </form>
       <div v-if="result" class="data-res-view">
@@ -160,21 +154,19 @@
                 v-model="nameSeeding"
                 placeholder="Введите название грядки"
               />
-              <button class="btn" @click="seedingSave">Сохранить</button>
-              <button class="btn close" @click="saveResultBtn = !saveResultBtn">
+              <Btn @click="seedingSave">Сохранить</Btn>
+              <Btn
+                class="btn-outline close"
+                @click="saveResultBtn = !saveResultBtn"
+              >
                 Отмена
-              </button>
+              </Btn>
             </div>
           </div>
-          <button
-            class="btn"
-            @click="saveResultBtn = !saveResultBtn"
-            id="calc-tomat-save"
-          >
-            Сохранить результат</button
-          ><button class="btn" id="calc-tomat-plan">
-            Запланировать посадку
-          </button>
+
+          <Btn class="btn-outline" @click="saveResultBtn = !saveResultBtn">
+            Сохранить результат</Btn
+          ><Btn class="btn-outline"> Запланировать посадку </Btn>
         </div>
       </div>
       <div class="picture" v-show="width !== 0 && height !== 0">
@@ -186,6 +178,7 @@
 </template>
 <script>
 import axios from "axios";
+import Btn from "../../ui/Btn.vue";
 export default {
   data() {
     return {
@@ -194,18 +187,18 @@ export default {
       loadingDataApi: true,
       nameSeeding: "",
       currentSortId: null,
-      currentSort: "default", // Текущий сорт овоща
-      distanceBetweenRows: "", // Расстояние между рядов
-      distanceBetweenBushes: "", // Расстояние между кустов
-      bushes: 1, // Количество кустов
-      rows: 1, // Количество рядов
-      result: false, // Состояние нажатой кнопки
-      message: "", // Ошибки в отправке формы
-      saveStatus: false, // true  в случаи ошибки сохранения расчётов
-      errorSaveForm: [], // массив с ошибками сохранения формы
-      width: 0, // Ширина грядки
-      height: 0, // Длины грядки
-      oneRows: 0, // Кустов в одном ряду
+      currentSort: "default",
+      distanceBetweenRows: "",
+      distanceBetweenBushes: "",
+      bushes: 1,
+      rows: 1,
+      result: false,
+      message: "",
+      saveStatus: false,
+      errorSaveForm: [],
+      width: 0,
+      height: 0,
+      oneRows: 0,
       saveResultBtn: false, //  кнопка сохранить название грядки
     };
   },
@@ -266,7 +259,6 @@ export default {
             if (error.response.data.message) {
               this.errorSaveForm.push(error.response.data.message);
             }
-
             // Показываем блок с ошибками над полем
             this.saveStatus = true;
             // Оставляем поле открытым ля редактирования
@@ -322,13 +314,11 @@ export default {
           this.height =
             this.oneRows * this.distanceBetweenBushes +
             this.distanceBetweenBushes;
-
           let сanvasEl = this.$refs.canvas;
           сanvasEl.setAttribute("width", Math.ceil(this.height / 2));
           // Растягиваем полотно по высоте
           сanvasEl.setAttribute("height", Math.ceil(this.width / 2));
           let canvas = сanvasEl.getContext("2d");
-
           // Рисуем прямоугольник
           canvas.strokeRect(
             0,
@@ -337,7 +327,6 @@ export default {
             Math.ceil(this.width / 2)
           );
           this.canvasRow(canvas);
-
           setTimeout(() => {
             this.$refs.canvasRow.scrollIntoView({
               block: "start",
@@ -375,7 +364,6 @@ export default {
           this.distanceBetweenRows + w,
           this.distanceBetweenBushes + l
         );
-
         l = l + this.distanceBetweenBushes;
         ++iteracia;
       }
@@ -389,17 +377,10 @@ export default {
       canvas.fill(circle);
     },
   },
+  components: { Btn },
 };
 </script>
 <style lang="scss">
-.close {
-  color: rgb(235, 135, 135) !important;
-  border-color: rgb(235, 135, 135) !important;
-  &:hover {
-    color: rgb(0, 0, 0) !important;
-    border-color: rgb(0, 0, 0) !important;
-  }
-}
 .alert {
   color: red;
   padding: 15px 30px;
